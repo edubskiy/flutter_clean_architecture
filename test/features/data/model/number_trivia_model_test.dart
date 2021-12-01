@@ -21,7 +21,7 @@ void main() {
         // arrange
         final Map<String, dynamic> jsonMap =
             json.decode(fixture('trivia.json'));
-        
+
         // act
         final result = NumberTrivialModel.fromJson(jsonMap);
 
@@ -36,7 +36,7 @@ void main() {
         // arrange
         final Map<String, dynamic> jsonMap =
             json.decode(fixture('trivia_double.json'));
-        
+
         // act
         final result = NumberTrivialModel.fromJson(jsonMap);
 
@@ -44,5 +44,21 @@ void main() {
         expect(result, tNumberTriviaModel);
       },
     );
+
+    group('toJson', () {
+      test(
+        'should return a JSON map containing the proper data',
+        () async {
+          // arrange
+
+          // act
+          final result = tNumberTriviaModel.toJson();
+
+          // assert
+          final expectedMap = {"text": "Test text", "number": 1};
+          expect(result, expectedMap);
+        },
+      );
+    });
   });
 }
