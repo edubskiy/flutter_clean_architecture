@@ -5,22 +5,18 @@ import 'package:flutter_clean_architecture/core/usecase/usecase.dart';
 import 'package:flutter_clean_architecture/features/number_trivia/domain/entity/number_trivia.dart';
 import 'package:flutter_clean_architecture/features/number_trivia/domain/repository/number_trivia_repository.dart';
 
-class GetConcreteNumberTrivia implements UseCase<NumberTrivia, Params> {
+class GetRandomNumberTrivia implements UseCase<NumberTrivia, NoParams> {
   final NumberTriviaRepository repository;
 
-  GetConcreteNumberTrivia(this.repository);
+  GetRandomNumberTrivia(this.repository);
 
   @override
-  Future<Either<Failure, NumberTrivia>> call(Params params) async {
-    return await repository.getConcreteNumberTrivia(params.number);
+  Future<Either<Failure, NumberTrivia>> call(NoParams params) async {
+    return await repository.getRandomNumberTrivia();
   }
 }
 
-class Params extends Equatable {
-  final int number;
-
-  const Params({ required this.number});
-
+class NoParams extends Equatable {
   @override
-  List<Object?> get props => [number];
+  List<Object?> get props => [];
 }
