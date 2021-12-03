@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_clean_architecture/core/platform/network_info.dart';
 import 'package:flutter_clean_architecture/features/number_trivia/data/datasource/number_trivia_local_datasource.dart';
 import 'package:flutter_clean_architecture/features/number_trivia/data/datasource/number_trivia_remote_datasource.dart';
@@ -18,16 +19,16 @@ class MockNumberLocalDataSource extends Mock
 
 class MockNetworkInfo extends Mock implements NetworkInfo {}
 
-@GenerateMocks([MockNetworkInfo])
+@GenerateMocks([MockNetworkInfo, MockNumberLocalDataSource, MockNumberRemoteDataSource])
 void main() {
   late NumberTriviaRepositoryImpl repository;
-  MockNumberLocalDataSource mockNumberLocalDataSource;
-  MockNumberRemoteDataSource mockNumberRemoteDataSource;
+  late MockMockNumberLocalDataSource mockNumberLocalDataSource;
+  late MockMockNumberRemoteDataSource mockNumberRemoteDataSource;
   late MockMockNetworkInfo mockNetworkInfo;
 
   setUp(() {
-    mockNumberRemoteDataSource = MockNumberRemoteDataSource();
-    mockNumberLocalDataSource = MockNumberLocalDataSource();
+    mockNumberRemoteDataSource = MockMockNumberRemoteDataSource();
+    mockNumberLocalDataSource = MockMockNumberLocalDataSource();
     mockNetworkInfo = MockMockNetworkInfo();
 
     repository = NumberTriviaRepositoryImpl(
@@ -52,5 +53,33 @@ void main() {
         verify(mockNetworkInfo.isConnected);
       },
     );
+
+    group('device is online', () {
+      setUp(() {
+        when(mockNetworkInfo.isConnected)
+            .thenAnswer((realInvocation) async => true);
+      });
+
+      test(
+        'should return remote data when the call to remote data source is successful',
+        () async {
+          // arrange
+          when(mockNumberRemoteDataSource.getConcreteNumberTrivia(tNumber))
+              .thenAnswer((realInvocation) async => tNumberTriviaModel);
+          // act
+          final result = await repository.getConcreteNumberTrivia(tNumber);
+          // assert
+          verify(mockNumberRemoteDataSource.getConcreteNumberTrivia(tNumber));
+          expect(result, equals(const Right(tNumberTrivia)));
+        },
+      );
+    });
+
+    group('device is offline', () {
+      setUp(() {
+        when(mockNetworkInfo.isConnected)
+            .thenAnswer((realInvocation) async => false);
+      });
+    });
   });
 }
