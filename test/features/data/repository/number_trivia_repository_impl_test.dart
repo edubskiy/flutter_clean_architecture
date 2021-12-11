@@ -45,7 +45,9 @@ void main() {
     test(
       'should check if device is online',
       () async {
-        // arrange
+        // arran
+        when(mockNumberRemoteDataSource.getConcreteNumberTrivia(tNumber))
+              .thenAnswer((realInvocation) async => tNumberTriviaModel);
         when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
         // act
         repository.getConcreteNumberTrivia(tNumber);
